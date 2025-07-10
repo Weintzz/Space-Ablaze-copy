@@ -3,6 +3,8 @@
 uniform vec2 resolution;
 uniform sampler2D texture0;
 
+out vec4 fragColor;
+
 vec2 barrelDistortion(vec2 uv) {
  
     uv = (uv - 0.5) * 2.0;
@@ -22,7 +24,7 @@ void main() {
     
     vec2 distortedUV = barrelDistortion(uv);
     
-    vec4 color = texture2D(texture0, distortedUV);
+    vec4 color = texture(texture0, distortedUV);
     
     if (distortedUV.x < 0.0 || distortedUV.x > 1.0 || 
         distortedUV.y < 0.0 || distortedUV.y > 1.0) {
@@ -36,5 +38,5 @@ void main() {
     color.rgb = color.rgb * 1.1 - 0.05;
     color.rgb = clamp(color.rgb, 0.0, 1.0);
     
-    gl_FragColor = color;
+    fragColor = color;
 }

@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include "Timer.hpp"
 #include "BulletManager.hpp"
+#include "PlayerHealth.hpp"
 
 
 enum PlayerState
@@ -25,6 +26,7 @@ public:
     Rectangle getHitbox() const { return rect; }
     void takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize);
     PlayerState getPlayerState() const { return playerState; }
+    double getTimeOfDeath() const;
 
 private:
 
@@ -34,4 +36,6 @@ private:
     Cooldown playerAttackCooldown;
     bool autoShoot;
     float timeStateEntered;
+    PlayerHealth healthManager{125};
+    double timeOfDeath = 0.0;
 };

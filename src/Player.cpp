@@ -6,6 +6,7 @@
 #include "raymath.h"
 #include <cmath>
 #include "Utils.hpp"
+#include "PlayerHealth.hpp"
 
 #define GAME_SCREEN_WIDTH 3840
 #define GAME_SCREEN_HEIGHT 2160
@@ -45,6 +46,7 @@ void Player::init()
     velocity = {0, 0};
     playerAccelerating = false;
     origin = {rect.width / 2.0f, rect.height / 2.0f};
+    playerState = PLAYER_DEFAULT; // Ensure state is set
 
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
@@ -82,6 +84,11 @@ void Player::init()
 
 
 void Player::update() {
+    std::cout << "Player state: " << playerState << std::endl;
+    if (playerState == PLAYER_DEAD) {
+        // Optionally, add death animation or game over logic here
+        return;
+    }
 
 #pragma region HandlePlayerState
 
@@ -232,7 +239,17 @@ void Player::update() {
 
 void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize) 
 {
-
+    std::cout << "takeDamage called, state: " << playerState << std::endl;
+    if (playerState == PLAYER_DEAD) return;
+    healthManager.takeDamage(25); // Or any damage value you want
+    std::cout << "Player HP: " << healthManager.getHP() << std::endl;
+    if (healthManager.isDead()) {
+        playerState = PLAYER_DEAD;
+        timeOfDeath = GetTime();
+        std::cout << "Player died!" << std::endl;
+        // Optionally, trigger death animation or game over logic here
+        return;
+    }
     playerState = PLAYER_STUNNED;
     this->timeStateEntered = timeStateEntered;
     Vector2 nudgeDirection = Vector2Normalize(Vector2Subtract(position, entityPosition));
@@ -248,3 +265,7 @@ void Player::draw()
     // DrawRectangleRec(rect, WHITE); // ? for debugging purposes
     // no drawing since the animator class handles it
 };
+
+double Player::getTimeOfDeath() const {
+    return timeOfDeath;
+}

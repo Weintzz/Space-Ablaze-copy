@@ -4,6 +4,8 @@ uniform vec2 resolution;
 uniform float time;
 uniform sampler2D texture0;
 
+out vec4 fragColor;
+
 vec2 curve(vec2 uv) {
     uv = (uv - 0.5) * 2.0;
     uv *= 1.1;    
@@ -20,15 +22,15 @@ void main() {
     vec2 uv = q;
     uv = curve(uv);
     
-    vec3 oricol = texture2D(texture0, q).xyz;
+    vec3 oricol = texture(texture0, q).xyz;
     vec3 col;
     
     float x = sin(0.3 * time + uv.y * 21.0) * sin(0.7 * time + uv.y * 29.0) * 
               sin(0.3 + 0.33 * time + uv.y * 31.0) * 0.0005; 
 
-    col.r = texture2D(texture0, vec2(x + uv.x + 0.0005, uv.y + 0.0005)).x + 0.03; 
-    col.g = texture2D(texture0, vec2(x + uv.x + 0.0000, uv.y - 0.0010)).y + 0.03;
-    col.b = texture2D(texture0, vec2(x + uv.x - 0.0010, uv.y + 0.0000)).z + 0.03; 
+    col.r = texture(texture0, vec2(x + uv.x + 0.0005, uv.y + 0.0005)).x + 0.03; 
+    col.g = texture(texture0, vec2(x + uv.x + 0.0000, uv.y - 0.0010)).y + 0.03;
+    col.b = texture(texture0, vec2(x + uv.x - 0.0010, uv.y + 0.0000)).z + 0.03; 
 
     col = clamp(col * 0.6 + 0.4 * col * col * 1.0, 0.0, 1.0);   
     float vig = (0.0 + 1.0 * 16.0 * uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y));
@@ -45,5 +47,5 @@ void main() {
     if (uv.x < 0.0 || uv.x > 1.0) col *= 0.0;
     if (uv.y < 0.0 || uv.y > 1.0) col *= 0.0;
 
-    gl_FragColor = vec4(col, 1.0);
+    fragColor = vec4(col, 1.0);
 }

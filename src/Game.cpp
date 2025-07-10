@@ -33,6 +33,8 @@ void Game::onSwitch()
     worldTileSize = 500.0f; 
     playerEntity = Player();
     playerEntity.init();
+    EnemyManager::GetInstance().reset();
+    AsteroidManager::GetInstance().reset();
     utils::gameCamera = {0};
     utils::gameCamera.target = { playerEntity.getPosition().x, playerEntity.getPosition().y };
     utils::gameCamera.offset = {GAME_SCREEN_WIDTH/2.0f, GAME_SCREEN_HEIGHT/2.0f};
@@ -46,9 +48,6 @@ void Game::onSwitch()
         {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize}   // 1.0
     };
 
-    EnemyManager::GetInstance().reset();
-    AsteroidManager::GetInstance().reset();
-
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
 }
@@ -57,6 +56,16 @@ void Game::onSwitch()
 std::string Game::update() 
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
+
+    // If player is dead, wait 3 seconds then return to main menu
+    if (playerEntity.getPlayerState() == PLAYER_DEAD) {
+        if (GetTime() - playerEntity.getTimeOfDeath() > 5.0) {
+            EnemyManager::GetInstance().reset();
+            AsteroidManager::GetInstance().reset();
+            playerEntity.init();
+            return "MainMenu";
+        }
+    }
 
 #pragma region StartAnimation
 
