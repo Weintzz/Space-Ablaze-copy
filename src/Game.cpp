@@ -63,6 +63,7 @@ std::string Game::update()
             EnemyManager::GetInstance().reset();
             AsteroidManager::GetInstance().reset();
             playerEntity.init();
+            killCount = 0; // Reset kill count when player dies
             return "MainMenu";
         }
     }
